@@ -98,11 +98,13 @@ class Hero:
                     else:
                         self.cast_2_skill(my_team, enemies_team)
             elif choice == '-':
-                return
+                break
             elif choice == 'i':
                 self.print_heroes_info(my_team, enemies_team)
             else:
                 pass
+
+        self.after_move()
 
     def print_heroes_info(self, my_team, enemies_team):
         for hero in my_team + enemies_team:
@@ -133,12 +135,20 @@ class Hero:
         for effect in self.effects:
             effect.before_move_tick()
 
+    def after_move(self):
+        for effect in self.effects:
+            effect.after_move_tick()
+
     def short_str(self):
         return f"{self.get_colored_name()} ({self.hp}/{self.max_hp})"
 
     def __str__(self):
+        effects_text = ''
+        for effect in self.effects:
+            effects_text += f'- {effect}\n'
         return f"{self.get_colored_name()} ({self.hp}/{self.max_hp})\n" \
-               f"attack={self.attack} | armor={self.armor} | mana={self.mana}/{self.max_mana} | magic={self.magic}"
+               f"attack={self.attack} | armor={self.armor} | mana={self.mana}/{self.max_mana} | magic={self.magic}\n" \
+               f"{effects_text}"
 
 
 class Archer(Hero):
@@ -165,6 +175,7 @@ class Archer(Hero):
     def cast_1_skill(self, my_team, enemies_team):
         for hero in enemies_team:
             hero.effects.append(effects.Poisoning(hero, 2, 2))
+            hero.effects.append(effects.Bleeding(hero, 2))
 
     def cast_2_skill(self, my_team, enemies_team):
         print(f"{colors.CGREEN}{self.name} запускает град стрел{colors.CEND}")
