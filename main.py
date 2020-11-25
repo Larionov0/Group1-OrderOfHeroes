@@ -1,6 +1,9 @@
 import random
 import colors
 import effects
+from os import system
+
+system('cls')
 
 
 class Hero:
@@ -21,6 +24,7 @@ class Hero:
     alive = True
 
     did_action = False
+    can_do_move = True
 
     def __init__(self, team):
         self.team = team
@@ -67,42 +71,45 @@ class Hero:
 
     def hero_makes_move_menu(self, my_team, enemies_team):
         self.before_move()
-        while True:
-            print(f"--= Ходит {self.name} ({self.team}) =--")
-            text = f"{self}\n" \
-                   "a - обычная атака\n" \
-                   "1 - первое умение\n" \
-                   "2 - второе умение\n" \
-                   "- - пропустить ход\n" \
-                   "i - информация про героев\n" \
-                   "Ваш выбор: "
-            choice = input(text)
-            if choice == 'a':
-                self.normal_attack_menu(enemies_team)
-            elif choice == '1':
-                print(f"--| {self.skill_1_name} |--")
-                print(self.skill_1_description)
-                ans = input("Используем умение? (y/n): ")
-                if ans == 'y':
-                    if self.did_action is True:
-                        print('Вы уже совершали действие')
-                    else:
-                        self.cast_1_skill(my_team, enemies_team)
-            elif choice == '2':
-                print(f"--| {self.skill_2_name} |--")
-                print(self.skill_2_description)
-                ans = input("Используем умение? (y/n): ")
-                if ans == 'y':
-                    if self.did_action is True:
-                        print('Вы уже совершали действие')
-                    else:
-                        self.cast_2_skill(my_team, enemies_team)
-            elif choice == '-':
-                break
-            elif choice == 'i':
-                self.print_heroes_info(my_team, enemies_team)
-            else:
-                pass
+        if self.can_do_move:
+            while True:
+                print(f"--= Ходит {self.name} ({self.team}) =--")
+                text = f"{self}\n" \
+                       "a - обычная атака\n" \
+                       "1 - первое умение\n" \
+                       "2 - второе умение\n" \
+                       "- - пропустить ход\n" \
+                       "i - информация про героев\n" \
+                       "Ваш выбор: "
+                choice = input(text)
+                if choice == 'a':
+                    self.normal_attack_menu(enemies_team)
+                elif choice == '1':
+                    print(f"--| {self.skill_1_name} |--")
+                    print(self.skill_1_description)
+                    ans = input("Используем умение? (y/n): ")
+                    if ans == 'y':
+                        if self.did_action is True:
+                            print('Вы уже совершали действие')
+                        else:
+                            self.cast_1_skill(my_team, enemies_team)
+                elif choice == '2':
+                    print(f"--| {self.skill_2_name} |--")
+                    print(self.skill_2_description)
+                    ans = input("Используем умение? (y/n): ")
+                    if ans == 'y':
+                        if self.did_action is True:
+                            print('Вы уже совершали действие')
+                        else:
+                            self.cast_2_skill(my_team, enemies_team)
+                elif choice == '-':
+                    break
+                elif choice == 'i':
+                    self.print_heroes_info(my_team, enemies_team)
+                else:
+                    pass
+        else:
+            print(f"{self.get_colored_name()} лишен хода")
 
         self.after_move()
 
@@ -116,20 +123,15 @@ class Hero:
         if self.did_action is True:
             print(f"{self.name} уже совершал атаку:(")
             return
-        print('0 - вернуться назад')
-        i = 1
-        for hero in enemies_team:
-            print(f"{i} - {hero.short_str()}")
-            i += 1
 
-        choice = int(input('Ваш выбор: '))
-        if choice == 0:
+        target_hero = self.choose_hero_from_list(enemies_team)
+        if target_hero:
+            self.normal_attack(target_hero)
+        else:
             return
 
-        target_hero = enemies_team[choice - 1]  # выбрали цель
-        self.normal_attack(target_hero)
-
     def before_move(self):
+        self.can_do_move = True
         self.did_action = False
         self.mana += 1
         for effect in self.effects:
@@ -138,6 +140,24 @@ class Hero:
     def after_move(self):
         for effect in self.effects:
             effect.after_move_tick()
+
+    def choose_hero_from_list(self, heroes, text='--= Выберите героя =--'):
+        print(text)
+        print('0 - вернуться назад')
+        i = 1
+        for hero in heroes:
+            print(f"{i} - {hero.short_str()}")
+            i += 1
+
+        choice = int(input('Ваш выбор: '))
+        if choice == 0:
+            return False
+
+        if choice < 0 or choice > len(heroes):
+            print("Такого варианта у вас нет")
+            return False
+
+        return heroes[choice - 1]  # выбрали цель и вернули ее
 
     def short_str(self):
         return f"{self.get_colored_name()} ({self.hp}/{self.max_hp})"
@@ -191,7 +211,7 @@ class Assassin(Hero):
     name = 'Assasin'
 
     skill_1_name = "Критический выпад"
-    skill_2_name = ""
+    skill_2_name = "Подброс клинка"
 
     skill_1_description = "Ассасин выбирает одного врага. Этот враг мгновенно получает урон, равный двум атакам Ассасина. " \
                           "Если это добило врага, Ассасин восстанавливает 5 здоровья."
@@ -208,16 +228,21 @@ class Assassin(Hero):
         # self.did_action = True
 
     def cast_1_skill(self, my_team, enemies_team):
-        i = 0
-        for hero in enemies_team:
-            print(f'{i} - {hero.short_str()}')
-            i += 1
-        asasin_choice_number = int(input())
-        asasin_choice = enemies_team[asasin_choice_number]
-        asasin_choice.get_damage(self.attack * 2)
-        if asasin_choice.alive is False:
+        assassin_choice = self.choose_hero_from_list(enemies_team)
+        if assassin_choice is False:
+            return
+
+        assassin_choice.get_damage(self.attack * 2)
+        if assassin_choice.alive is False:
             self.regen_hp(5)
         self.did_action = True
+
+    def cast_2_skill(self, my_team, enemies_team):
+        enemy = self.choose_hero_from_list(enemies_team)
+        delayed = effects.DelayedDamage(enemy, 2, 10, [
+            effects.Bleeding(enemy, 2)
+        ])
+        enemy.effects.append(delayed)
 
 
 class Copyrsanka(Hero):
@@ -242,22 +267,11 @@ class Copyrsanka(Hero):
             self.loose_hp(remaining_damage)
 
     def cast_1_skill(self, my_team, enemies_team):
-        i = 0
-        for hero in enemies_team:
-            print(f'{i} - {hero.short_str()}')
-            i += 1
-        kopyrsanka_vrag_number = int(input())
-        kopyrsanka_vrag = enemies_team[kopyrsanka_vrag_number]
+        kopyrsanka_vrag = self.choose_hero_from_list(enemies_team)
         hp = random.randint(3, 5)
         kopyrsanka_vrag.loose_hp(hp)
 
-        i = 0
-        for hero in my_team:
-            print(f'{i} - {hero.short_str()}')
-            i += 1
-
-        kopyrsanka_teammate_number = int(input())
-        kopyrsanka_teammate = my_team[kopyrsanka_teammate_number]
+        kopyrsanka_teammate = self.choose_hero_from_list(my_team)
         kopyrsanka_teammate.regen_hp(hp)
         self.did_action = True
 
@@ -296,10 +310,10 @@ class Ogr(Hero):
     name = 'Ogr'
 
     skill_1_name = "съесть ягоду"
-    skill_2_name = ""
+    skill_2_name = "Мышцы в жир"
 
     skill_1_description = "вы едите ягоду и пополняете половину от недостающего здоровья"
-    skill_2_description = ""
+    skill_2_description = "Огр может потратить 10 здоровья и получить +1 броню. Это умение не отбирает его действие"
 
     def get_damage(self, damage):
         super().get_damage(damage)
@@ -311,6 +325,11 @@ class Ogr(Hero):
         self.hp += a
         print(f'Вы съели ягоду и пополнили {a} здоровья. Теперь у вас {self.hp} ед. здоровья.')
         self.did_action = True
+
+    def cast_2_skill(self, my_team, enemies_team):
+        print(f'Вы потратили 10 hp и получили 1 броню')
+        self.loose_hp(10)
+        self.armor += 1
 
 
 class Nekromant(Hero):
@@ -346,6 +365,30 @@ class Nekromant(Hero):
         print(f"У {self.name} magic += {magic}. Теперь у него {self.magic}")
 
 
+class Mummy(Hero):
+    name = 'Mummy'
+    hp = max_hp = 20
+    attack = 2
+    armor = 1
+
+    skill_1_name = 'Замотка'
+    skill_2_name = ''
+
+    skill_1_description = 'Мумия обматывает бинтами выбранного противника, оглушая его на ход и нанося 3-6 урона\n' \
+                          'и оставляет кровотечение на ход'
+    skill_2_description = ''
+
+    def cast_1_skill(self, my_team, enemies_team):
+        enemy = self.choose_hero_from_list(enemies_team)
+        if enemy is False:
+            return
+        enemy.get_damage(random.randint(3, 6))
+        stun = effects.Stun(enemy, 1)
+        bleeding = effects.Bleeding(enemy, 1)
+        enemy.effects.append(stun)
+        enemy.effects.append(bleeding)
+
+
 class Skeleton(Hero):
     name = 'Skeleton'
     hp = max_hp = 5
@@ -360,7 +403,7 @@ class Skeleton(Hero):
 
 def main():
     team1 = [Archer(1), Ogr(1), Nekromant(1)]
-    team2 = [Copyrsanka(2), Assassin(2)]
+    team2 = [Copyrsanka(2), Assassin(2), Mummy(2)]
 
     round = 1
     while True:
