@@ -1,4 +1,4 @@
-import colors
+from . import colors
 
 
 class Effect:
@@ -85,7 +85,7 @@ class Arson(Effect):
         self.damage = 1
 
     def after_move_tick(self):
-        print(f"{colors.CGREEN}Отравление в деле")
+        print(f"{colors.CGREEN}Поджог в деле")
         self.hero.loose_hp(self.damage)
         print(colors.CEND, end='')
         self.decrease_duration()
@@ -115,3 +115,31 @@ class DelayedDamage(Effect):
         self.hero.loose_hp(self.damage)
         for effect in self.effects:
             self.hero.effects.append(effect)
+
+
+class DelayedHeeling(Effect):
+    name = 'Отложенное лечение'
+
+    def __init__(self, hero, duration, hill, effects=[]):
+        super().__init__(hero, duration)
+        self.hill = hill
+        self.effects = effects
+
+    def after_move_tick(self):
+        self.decrease_duration()
+
+    def on_ending_tick(self):
+        self.hero.regen_hp(self.hill)
+        for effect in self.effects:
+            self.hero.effects.append(effect)
+
+
+class Silence(Effect):
+    name = 'Безмолвие'
+
+    def before_move_tick(self):
+        self.hero.can_cast_skill = False
+        self.decrease_duration()
+
+    def __str__(self):
+        return f"<{self.name} ⚔⚔⚔  ({self.duration})>"
