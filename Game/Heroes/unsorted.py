@@ -1,37 +1,3 @@
-
-class Nekromant(Hero):
-    hp = max_hp = 17
-    attack = 2
-    armor = 0
-    magic = 1
-    name = 'Nekromant'
-
-    skill_1_name = "Магическое восстановление"
-    skill_2_name = "Призыв скелетона"
-    skill_1_description = "Некромант восстанавливает себе HP на величину, равную его магии (magic). После этого он увеличивает свой показатель магии на 1."
-    skill_2_description = "Некромант призывает Скелетона"
-
-    def get_damage(self, damage):
-        super().get_damage(damage)
-        if self.alive and random.randint(1, 100) <= 30:
-            self.magic += 1
-
-    def cast_1_skill(self, my_team, enemies):
-        print(f"{colors.CGREEN}{self.name} восстанавливается {colors.CEND}")
-        self.regen_hp(self.magic)
-        self.add_magic(1)
-        self.did_action = True
-
-    def cast_2_skill(self, my_team, enemies_team):
-        skel = Skeleton(self.team)
-        my_team.append(skel)
-        self.did_action = True
-
-    def add_magic(self, magic):
-        self.magic += magic
-        print(f"У {self.name} magic += {magic}. Теперь у него {self.magic}")
-
-
 class Mummy(Hero):
     name = 'Mummy'
     hp = max_hp = 20
@@ -56,16 +22,6 @@ class Mummy(Hero):
         enemy.effects.append(bleeding)
 
 
-class Skeleton(Hero):
-    name = 'Skeleton'
-    hp = max_hp = 5
-    attack = 2
-    armor = 0
-    skill_1_name = "Ничего не делать"
-    skill_2_name = "Ничего не делать"
-
-    skill_1_description = "Не работать"
-    skill_2_description = "Не работать"
 
 
 class Sniper(Hero):

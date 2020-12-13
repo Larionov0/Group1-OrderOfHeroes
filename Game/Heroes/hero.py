@@ -27,9 +27,11 @@ class Hero:
     skill1 = Skill()
     skill2 = Skill()
 
-    def __init__(self, team):
+    def __init__(self, team, team_list, dead_list):
         self.team = team
         self.effects = []
+        self.team_list = team_list
+        self.dead_list = dead_list
 
     def get_color(self):
         if self.team == 1:
@@ -50,8 +52,13 @@ class Hero:
         self.hp -= hp
         print(f"{self.name} ранен на {hp} hp. У него осталось {self.hp}/{self.max_hp}")
         if self.hp <= 0:
-            self.alive = False
-            print(f"{self.name} мертв. Помним. Любим. Скорбим.")
+            self.die()
+
+    def die(self):
+        self.alive = False
+        self.team_list.remove(self)
+        self.dead_list.append(self)
+        print(f"{self.name} мертв. Помним. Любим. Скорбим.")
 
     def regen_hp(self, hp):
         self.hp += hp
@@ -77,8 +84,8 @@ class Hero:
                 print(f"--= Ходит {self.name} ({self.team}) =--")
                 text = f"{self}\n" \
                        "a - обычная атака\n" \
-                       "1 - первое умение\n" \
-                       "2 - второе умение\n" \
+                       f"1 - первое умение ({colors.CGREEN2}{self.skill1}{colors.CEND})\n" \
+                       f"2 - второе умение ({colors.CGREEN2}{self.skill2}{colors.CEND})\n" \
                        "- - пропустить ход\n" \
                        "i - информация про героев\n" \
                        "Ваш выбор: "
@@ -127,6 +134,8 @@ class Hero:
     def after_move(self):
         for effect in self.effects:
             effect.after_move_tick()
+        for skill in [self.skill1, self.skill2]:
+            skill.after_move_tick()
 
     def choose_hero_from_list(self, heroes, text='--= Выберите героя =--'):
         print(text)
@@ -154,5 +163,6 @@ class Hero:
         for effect in self.effects:
             effects_text += f'- {effect}\n'
         return f"{self.get_colored_name()} ({self.hp}/{self.max_hp})\n" \
+               f"{self.skill1}  |  {self.skill2}\n" \
                f"attack={self.attack} | armor={self.armor} | mana={self.mana}/{self.max_mana} | magic={self.magic}\n" \
                f"{effects_text}"

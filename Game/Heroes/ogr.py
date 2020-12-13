@@ -14,7 +14,7 @@ class Skill1(Skill):
         a = round((hero.max_hp - hero.hp) / 2)
         hero.regen_hp(a)
         print(f'Вы съели ягоду и пополнили {a} здоровья. Теперь у вас {hero.hp} ед. здоровья.')
-        hero.did_action = True
+        self.classic_after_cast(hero)
 
 
 class Skill2(Skill):
@@ -26,6 +26,7 @@ class Skill2(Skill):
         print(f'Вы потратили 10 hp и получили 1 броню')
         hero.loose_hp(10)
         hero.armor += 1
+        self.start_otschet()
 
 
 class Ogr(Hero):

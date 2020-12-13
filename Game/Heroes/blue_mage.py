@@ -17,7 +17,7 @@ class Skill1(Skill):
 
         target_hero.loose_hp(random.randint(3, 14))
         print(f"{colors.CGREEN}{hero.name} запускает магический шар{colors.CEND}")
-        hero.did_action = True
+        self.classic_after_cast(hero)
 
 
 class Skill2(Skill):
@@ -31,7 +31,7 @@ class Skill2(Skill):
             if random.randint(1, 100) <= 40:
                 enemy.effects.append(effects.Stun(enemy, 1))
                 print(f"{enemy.name} в состоянии опупения")
-        hero.did_action = True
+        self.classic_after_cast(hero)
 
 
 class BlueMage(Hero):

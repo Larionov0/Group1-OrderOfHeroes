@@ -14,6 +14,7 @@ class Skill1(Skill):
         for hero_ in enemies_team:
             hero_.effects.append(effects.Poisoning(hero, 2, 2))
             hero_.effects.append(effects.Bleeding(hero, 2))
+        self.classic_after_cast(hero)
 
 
 class Skill2(Skill):
@@ -26,7 +27,7 @@ class Skill2(Skill):
         print(f"{colors.CGREEN}{hero.name} запускает град стрел{colors.CEND}")
         for hero_ in enemies_team:
             hero_.get_damage(random.randint(2, 5))
-        hero.did_action = True
+        self.classic_after_cast(hero)
 
 
 class Archer(Hero):

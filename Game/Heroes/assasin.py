@@ -9,17 +9,17 @@ class Skill1(Skill):
     name = "Критический выпад"
     description = "Ассасин выбирает одного врага. Этот враг мгновенно получает урон, равный двум атакам Ассасина. " \
                   "Если это добило врага, Ассасин восстанавливает 5 здоровья."
-    cooldown = 4
+    cooldown = 3
 
     def cast(self, hero, my_team, enemies_team):
         assassin_choice = hero.choose_hero_from_list(enemies_team)
         if assassin_choice is False:
             return
 
-        assassin_choice.get_damage(hero.attack * 2)
+        assassin_choice.get_damage(hero.attack * 20)
         if assassin_choice.alive is False:
             hero.regen_hp(5)
-        hero.did_action = True
+        self.classic_after_cast(hero)
 
 
 class Skill2(Skill):
@@ -33,6 +33,7 @@ class Skill2(Skill):
             effects.Bleeding(enemy, 2)
         ])
         enemy.effects.append(delayed)
+        self.classic_after_cast(hero)
 
 
 class Assassin(Hero):

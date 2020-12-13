@@ -18,7 +18,7 @@ class Skill2_2(Skill):
         kopyrs_choice_number = int(input())
         kopyrs_choice = my_team[kopyrs_choice_number]
         kopyrs_choice.regen_hp(2)
-        hero.did_action = True
+        self.classic_after_cast(hero)
 
 
 class Kopyrsenysh(Hero):
@@ -44,7 +44,7 @@ class Skill1(Skill):
 
         kopyrsanka_teammate = hero.choose_hero_from_list(my_team)
         kopyrsanka_teammate.regen_hp(hp)
-        hero.did_action = True
+        self.classic_after_cast(hero)
 
 
 class Skill2(Skill):
@@ -53,9 +53,9 @@ class Skill2(Skill):
     cooldown = 4
 
     def cast(self, hero, my_team, enemies_team):
-        kopyrs = Kopyrsenysh(hero.team)
+        kopyrs = Kopyrsenysh(hero.team, hero.team_list, hero.dead_list)
         my_team.append(kopyrs)
-        hero.did_action = True
+        self.classic_after_cast(hero)
 
 
 class Copyrsanka(Hero):
