@@ -16,7 +16,7 @@ class Skill1(Skill):
         if assassin_choice is False:
             return
 
-        assassin_choice.get_damage(hero.attack * 20)
+        assassin_choice.get_damage(hero.attack * 2)
         if assassin_choice.alive is False:
             hero.regen_hp(5)
         self.classic_after_cast(hero)

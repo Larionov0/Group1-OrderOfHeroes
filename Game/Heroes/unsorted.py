@@ -1,29 +1,3 @@
-class Mummy(Hero):
-    name = 'Mummy'
-    hp = max_hp = 20
-    attack = 2
-    armor = 1
-
-    skill_1_name = 'Замотка'
-    skill_2_name = ''
-
-    skill_1_description = 'Мумия обматывает бинтами выбранного противника, оглушая его на ход и нанося 3-6 урона\n' \
-                          'и оставляет кровотечение на ход'
-    skill_2_description = ''
-
-    def cast_1_skill(self, my_team, enemies_team):
-        enemy = self.choose_hero_from_list(enemies_team)
-        if enemy is False:
-            return
-        enemy.get_damage(random.randint(3, 6))
-        stun = effects.Stun(enemy, 1)
-        bleeding = effects.Bleeding(enemy, 1)
-        enemy.effects.append(stun)
-        enemy.effects.append(bleeding)
-
-
-
-
 class Sniper(Hero):
     hp = max_hp = 19
     attack = 4

@@ -10,6 +10,8 @@ from .Heroes.kopyrsanka import Copyrsanka
 from .Heroes.ogr import Ogr
 from .Heroes.blue_mage import BlueMage
 from .Heroes.nekromant import Nekromant
+from .Heroes.mummy import Mummy
+from .Heroes.sniper import Sniper
 
 
 all_heroes = [
@@ -18,7 +20,9 @@ all_heroes = [
     Copyrsanka,
     Ogr,
     BlueMage,
-    Nekromant
+    Nekromant,
+    Mummy,
+    Sniper
 ]
 
 

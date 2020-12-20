@@ -23,6 +23,7 @@ class Hero:
 
     did_action = False
     can_do_move = True
+    can_be_damaged = True
 
     skill1 = Skill()
     skill2 = Skill()
@@ -43,6 +44,10 @@ class Hero:
         return f"{self.get_color()}{self.name}{colors.CEND}"
 
     def get_damage(self, damage):
+        if self.can_be_damaged is False:
+            print(f'Герой {self.get_colored_name()} не может быть продамажен')
+            return
+
         remaining_damage = damage - self.armor
         print(f'{self.name} заблокировал {self.armor} урона. Получил {remaining_damage}/{damage}')
         if remaining_damage > 0:
@@ -55,10 +60,11 @@ class Hero:
             self.die()
 
     def die(self):
-        self.alive = False
-        self.team_list.remove(self)
-        self.dead_list.append(self)
-        print(f"{self.name} мертв. Помним. Любим. Скорбим.")
+        if self.alive is True:
+            self.alive = False
+            self.team_list.remove(self)
+            self.dead_list.append(self)
+            print(f"{self.name} мертв. Помним. Любим. Скорбим.")
 
     def regen_hp(self, hp):
         self.hp += hp
@@ -79,7 +85,7 @@ class Hero:
 
     def hero_makes_move_menu(self, my_team, enemies_team):
         self.before_move()
-        if self.can_do_move:
+        if self.can_do_move and self.alive:
             while True:
                 print(f"--= Ходит {self.name} ({self.team}) =--")
                 text = f"{self}\n" \
@@ -127,6 +133,7 @@ class Hero:
     def before_move(self):
         self.can_do_move = True
         self.did_action = False
+        self.can_be_damaged = True
         self.mana += 1
         for effect in self.effects:
             effect.before_move_tick()

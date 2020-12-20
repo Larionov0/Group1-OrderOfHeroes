@@ -143,3 +143,11 @@ class Silence(Effect):
 
     def __str__(self):
         return f"<{self.name} ⚔⚔⚔  ({self.duration})>"
+
+
+class FlawlessProtection(Effect):
+    name = 'Безупречная защита'
+
+    def before_move_tick(self):
+        self.hero.can_be_damaged = False
+        self.decrease_duration()
