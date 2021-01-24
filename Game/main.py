@@ -2,6 +2,7 @@ import random
 from . import colors
 from . import effects
 from .skills import Skill
+from .Savings.save import load_data
 from os import system
 
 from .Heroes.archer import Archer
@@ -56,13 +57,18 @@ def main_menu():
         if choice == '1':
             new_game_menu()
         elif choice == '2':
-            pass
+            continue_game()
         elif choice == '3':
             pass
         elif choice == '4':
             pass
         elif choice == '5':
             break
+
+
+def continue_game():
+    data = load_data()
+    fight_pvp(data)
 
 
 def new_game_menu():
@@ -93,6 +99,12 @@ def game_with_friend_menu():
         team1 = []
         team2 = []
 
+        data = {
+            'dead_list': dead_list,
+            'team1': team1,
+            'team2': team2,
+        }
+
         a = 0
         while a < pers_count:
             # выбор 1 игрока
@@ -105,18 +117,20 @@ def game_with_friend_menu():
 
             a += 1
 
-        fight_pvp(team1, team2)
+        fight_pvp(data)
         return
 
 
-def fight_pvp(team1, team2):
+def fight_pvp(data):
+    team1 = data['team1']
+    team2 = data['team2']
     round = 1
     while True:
         print(f"--= Новый раунд: {round} =--")
         for hero in team1:
-            hero.hero_makes_move_menu(team1, team2)
+            hero.hero_makes_move_menu(team1, team2, data)
         for hero in team2:
-            hero.hero_makes_move_menu(team2, team1)
+            hero.hero_makes_move_menu(team2, team1, data)
 
         if len(team1) == 0:
             win(2)

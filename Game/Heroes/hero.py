@@ -2,6 +2,7 @@ from .. import effects
 from .. import colors
 from ..skills import Skill
 import random
+from ..Savings.save import save_data
 
 
 class Hero:
@@ -33,6 +34,8 @@ class Hero:
         self.effects = []
         self.team_list = team_list
         self.dead_list = dead_list
+        self.skill1 = self.skill1
+        self.skill2 = self.skill2
 
     def get_color(self):
         if self.team == 1:
@@ -83,7 +86,7 @@ class Hero:
     def cast_2_skill(self, my_team, enemies_team):
         pass
 
-    def hero_makes_move_menu(self, my_team, enemies_team):
+    def hero_makes_move_menu(self, my_team, enemies_team, data):
         self.before_move()
         if self.can_do_move and self.alive:
             while True:
@@ -94,6 +97,7 @@ class Hero:
                        f"2 - второе умение ({colors.CGREEN2}{self.skill2}{colors.CEND})\n" \
                        "- - пропустить ход\n" \
                        "i - информация про героев\n" \
+                       "s - настройки\n" \
                        "Ваш выбор: "
                 choice = input(text)
                 if choice == 'a':
@@ -106,12 +110,29 @@ class Hero:
                     break
                 elif choice == 'i':
                     self.print_heroes_info(my_team, enemies_team)
+                elif choice == 's':
+                    self.settings(data)
                 else:
                     pass
         else:
             print(f"{self.get_colored_name()} лишен хода")
 
         self.after_move()
+
+    def settings(self, data):
+        while True:
+            print('---= Настройки =---')
+            print('1 - сохранить')
+            print('2 - выйти')
+
+            choice = input("Ваш выбор: ")
+            if choice == '1':
+                save_data(data)
+                input('Данные успешно сохранены')
+            elif choice == '2':
+                pass
+            else:
+                pass
 
     def print_heroes_info(self, my_team, enemies_team):
         for hero in my_team + enemies_team:
